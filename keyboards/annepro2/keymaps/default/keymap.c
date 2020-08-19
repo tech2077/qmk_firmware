@@ -111,10 +111,12 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         case KC_AP_LED_OFF:
             if (record->event.pressed)
                 annepro2LedDisable();
+                annepro2LedPrevProfile();
             return false;
         case KC_AP_LED_ON:
             if (record->event.pressed)
                 annepro2LedEnable();
+                annepro2LedNextProfile();
             return false;
         default:
             break;

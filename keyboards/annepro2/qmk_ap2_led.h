@@ -18,3 +18,4 @@ void annepro2LedSetProfile(uint8_t prof);
 uint8_t annepro2LedGetProfile(void);
 uint8_t annepro2LedGetNumProfiles(void);
 void annepro2LedNextProfile(void);
+void annepro2LedPrevProfile(void);
