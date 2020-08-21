@@ -25,17 +25,12 @@ uint16_t annepro2LedMatrix[MATRIX_ROWS * MATRIX_COLS] = {
 };
 
 void OVERRIDE keyboard_pre_init_kb(void) {
-#if HAL_USE_SPI == TRUE
-    spi_init();
-#endif
 }
 
 void OVERRIDE keyboard_post_init_kb(void) {
     // Start LED UART
     sdStart(&SD0, &ledUartConfig);
     sdWrite(&SD0, ledMcuWakeup, 11);
-
-    wait_ms(75);
 
     // Start BLE UART
     sdStart(&SD1, &bleUartConfig);
