@@ -2,6 +2,7 @@
 #include "hal.h"
 #include "annepro2.h"
 #include "annepro2_ble.h"
+#include "spi_master.h"
 
 static const SerialConfig ledUartConfig = {
   .speed = 115200,
@@ -25,6 +26,9 @@ uint16_t annepro2LedMatrix[MATRIX_ROWS * MATRIX_COLS] = {
 };
 
 void OVERRIDE keyboard_pre_init_kb(void) {
+#if HAL_USE_SPI == TRUE
+    spi_init();
+#endif
 }
 
 void OVERRIDE keyboard_post_init_kb(void) {
@@ -32,9 +36,20 @@ void OVERRIDE keyboard_post_init_kb(void) {
     sdStart(&SD0, &ledUartConfig);
     sdWrite(&SD0, ledMcuWakeup, 11);
 
+    // wait to receive response from wakeup
+    wait_ms(15);
+
+    // loop to clear out receive buffer from shine wakeup
+    while(!sdGetWouldBlock(&SD0))
+        sdGet(&SD0);
+
     // Start BLE UART
     sdStart(&SD1, &bleUartConfig);
     annepro2_ble_startup();
+
+    // Give the send uart thread some time to
+    // send out the queue before we read back
+    wait_ms(5);
 
     keyboard_post_init_user();
 }
