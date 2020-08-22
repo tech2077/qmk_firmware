@@ -7,10 +7,7 @@ enum anne_pro_layers {
   _FN1_LAYER,
   _FN2_LAYER,
 };
-enum custom_keys {
-    KC_AP_LED_ON = AP2_SAFE_RANGE,
-    KC_AP_LED_OFF,
-};
+
 /*
 * Layer _BASE_LAYER
 * ,-----------------------------------------------------------------------------------------.
@@ -102,27 +99,4 @@ void matrix_scan_user(void) {
 
 layer_state_t layer_state_set_user(layer_state_t layer) {
     return layer;
-}
-
-/*!
- * @returns false   processing for this keycode has been completed.
- */
-bool process_record_user(uint16_t keycode, keyrecord_t *record) {
-    switch (keycode) {
-        case KC_AP_LED_OFF:
-            if (record->event.pressed) {
-                annepro2LedDisable();
-                annepro2LedPrevProfile();
-            }
-            return false;
-        case KC_AP_LED_ON:
-            if (record->event.pressed) {
-                annepro2LedEnable();
-                annepro2LedNextProfile();
-            }
-            return false;
-        default:
-            break;
-    }
-    return true;
 }

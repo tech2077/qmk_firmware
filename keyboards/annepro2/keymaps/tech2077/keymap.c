@@ -31,11 +31,7 @@ enum anne_pro_layers {
     _FN1_LAYER,
     _FN2_LAYER,
 };
-enum custom_keys {
-    KC_AP_LED_ON = AP2_SAFE_RANGE,
-    KC_AP_LED_OFF,
-    KC_AP_LED_INC,
-};
+
 /*
 * Layer _BASE_LAYER
 * ,-----------------------------------------------------------------------------------------.
@@ -106,7 +102,7 @@ const uint16_t keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   *
   */
     [_FN2_LAYER] = KEYMAP(/* Base */
-        KC_TRNS, KC_AP2_BT1, KC_AP2_BT2, KC_AP2_BT3, KC_AP2_BT4, KC_TRNS, KC_TRNS, KC_TRNS, KC_AP_LED_OFF, KC_AP_LED_ON, KC_AP_LED_INC, KC_TRNS, KC_TRNS, KC_TRNS,
+        KC_TRNS, KC_AP2_BT1, KC_AP2_BT2, KC_AP2_BT3, KC_AP2_BT4, KC_TRNS, KC_TRNS, KC_TRNS, KC_AP_LED_OFF, KC_AP_LED_ON, KC_AP_LED_NEXT_PROFILE, KC_TRNS, KC_TRNS, KC_TRNS,
         MO(_FN2_LAYER), KC_TRNS, KC_UP, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_PSCR, KC_HOME, KC_END, KC_TRNS,
         KC_TRNS, KC_LEFT, KC_DOWN, KC_RGHT, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_PGUP, KC_PGDN, KC_TRNS,
         KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_INS, KC_DEL, KC_TRNS,
@@ -155,19 +151,17 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record)
     switch (keycode) {
     case KC_AP_LED_OFF:
         if (record->event.pressed) {
-            annepro2LedDisable();
             user_config.leds_on = false;
             eeprom_write((void*)&user_config, 0, sizeof(user_config_t));
         }
         return false;
     case KC_AP_LED_ON:
         if (record->event.pressed) {
-            annepro2LedEnable();
             user_config.leds_on = true;
             eeprom_write((void*)&user_config, 0, sizeof(user_config_t));
         }
         return false;
-    case KC_AP_LED_INC:
+    case KC_AP_LED_NEXT_PROFILE:
         if (record->event.pressed) {
             user_config.leds_profile = (user_config.leds_profile + 1) % numProfiles;
             annepro2LedSetProfile(user_config.leds_profile);
