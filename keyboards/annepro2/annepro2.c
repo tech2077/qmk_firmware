@@ -5,8 +5,12 @@
 #include "spi_master.h"
 #include "qmk_ap2_led.h"
 
-static const SerialConfig ledUartConfig = {
+static const SerialConfig ledUartInitConfig = {
   .speed = 115200,
+};
+
+static const SerialConfig ledUartConfig = {
+  .speed = 3000000,
 };
 
 static const SerialConfig bleUartConfig = {
@@ -34,7 +38,7 @@ void OVERRIDE keyboard_pre_init_kb(void) {
 
 void OVERRIDE keyboard_post_init_kb(void) {
     // Start LED UART
-    sdStart(&SD0, &ledUartConfig);
+    sdStart(&SD0, &ledUartInitConfig);
     sdWrite(&SD0, ledMcuWakeup, 11);
 
     // wait to receive response from wakeup
@@ -51,6 +55,9 @@ void OVERRIDE keyboard_post_init_kb(void) {
     // Give the send uart thread some time to
     // send out the queue before we read back
     wait_ms(5);
+
+    sdStop(&SD0);
+    sdStart(&SD0, &ledUartConfig);
 
     keyboard_post_init_user();
 }

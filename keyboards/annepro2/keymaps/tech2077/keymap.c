@@ -23,9 +23,6 @@ user_config_t user_config = {.magic = 0xDE, .leds_on = 0, .leds_profile = 0};
 // keep the number of profiles so we can track along with the shine proc
 uint8_t numProfiles = 0;
 
-static uint8_t usb_buf[256];
-static uint8_t buf_fil = 0;
-
 enum anne_pro_layers {
     _BASE_LAYER,
     _FN1_LAYER,
@@ -128,18 +125,10 @@ void raw_hid_receive(uint8_t *data, uint8_t length) {
   if (length == 1)
     annepro2LedSetProfile(data[0]);
   else {
-    for (uint8_t i = 0; i < length; i++){
-      usb_buf[buf_fil + i] = data[i];
+    for (int i = 0; i < length; i++) {
+      sdPut(&SD0, data[i]);
+      sdGet(&SD0);
     }
-    buf_fil += length;
-    if (buf_fil >= 211) {
-      sdWrite(&SD0, usb_buf, 211);
-      buf_fil = 0;
-    }
-//    for (int i = 0; i < length; i++) {
-//      sdPut(&SD0, data[i]);
-//      sdGet(&SD0);
-//    }
   }
 }
 

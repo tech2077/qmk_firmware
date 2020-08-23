@@ -9,6 +9,7 @@
 #define CMD_LED_PREV_PROFILE                0x7
 #define CMD_LED_GET_PROFILE                 0x8
 #define CMD_LED_GET_NUM_PROFILES            0x9
+#define CMD_LED_SET_ALL                     0xA
 
 void annepro2LedDisable(void);
 void annepro2LedEnable(void);
