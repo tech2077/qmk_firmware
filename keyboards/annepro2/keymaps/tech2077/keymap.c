@@ -120,15 +120,26 @@ layer_state_t layer_state_set_user(layer_state_t layer)
     return layer;
 }
 
+static uint8_t usbBuf[256];
+static uint8_t usbCnt = 0;
+
 void raw_hid_receive(uint8_t *data, uint8_t length) {
   uprintf("raw_hid len: %u\n", length);
   if (length == 1)
     annepro2LedSetProfile(data[0]);
   else {
-    for (int i = 0; i < length; i++) {
-      sdPut(&SD0, data[i]);
-      sdGet(&SD0);
-    }
+      for (int i = 0; i < length; i++) {
+          usbBuf[usbCnt + i] = data[i];
+      }
+
+      usbCnt += length;
+
+      if (usbCnt == 211) {
+          sdPut(&SD0, usbBuf[0]);
+          sdGet(&SD0);
+          sdAsynchronousWrite(&SD0, (usbBuf + 1), 210);
+          usbCnt = 0;
+      }
   }
 }
 
