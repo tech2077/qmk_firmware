@@ -2,6 +2,7 @@
 #include <stdint.h>
 #include <print.h>
 #include <string.h>
+#include <tmk_core/common/raw_hid.h>
 #include "qmk_ap2_led.h"
 #ifdef ANNEPRO2_C18
 #include "eeprom_w25x20cl.h"
@@ -124,12 +125,23 @@ layer_state_t layer_state_set_user(layer_state_t layer)
 
 static uint8_t usbBuf[256];
 static uint8_t usbCnt = 0;
+static uint8_t fullPktCnt = 0;
 
 void raw_hid_receive(uint8_t *data, uint8_t length) {
-  uprintf("raw_hid len: %u\n", length);
+  uprintf("raw_hid len: %u %u\n", length, fullPktCnt);
+  raw_hid_send(&length, 1);
   if (length == 1)
     annepro2LedSetProfile(data[0]);
   else {
+      if (length == 64) {
+          fullPktCnt += 1;
+      }
+
+      if (fullPktCnt == 4) {
+          length = 19;
+          fullPktCnt = 0;
+      }
+
       for (int i = 0; i < length; i++) {
           usbBuf[usbCnt + i] = data[i];
       }
