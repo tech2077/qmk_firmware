@@ -59,6 +59,8 @@ void OVERRIDE matrix_init_kb(void) {
     matrix_init_user();
 }
 
+void matrix_scan_kb() {
+}
 /*!
  * @returns false   processing for this keycode has been completed.
  */
